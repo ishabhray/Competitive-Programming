@@ -1,0 +1,129 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define PI 3.141592653589
+#define ll long long int
+#define ld long double
+#define vi vector<int>
+#define vl vector<ll>
+#define ii pair<int,int>
+#define pb push_back
+#define mp make_pair
+#define ff first
+#define ss second
+#define pll pair<ll,ll>
+#define vv vector
+#define all(v) (v).begin(),(v).end()
+int MOD=1e9+7;
+ll power(ll a, ll b){//a^b
+    ll res=1;
+    a=a%MOD;
+    while(b>0){
+        if(b&1){res=(res*a)%MOD;b--;}
+        a=(a*a)%MOD;
+        b>>=1;
+    }
+    return res;
+}
+ll fermat_inv(ll y){return power(y,MOD-2);}
+ll gcd(ll a, ll b){return (b==0)?a:gcd(b,a%b);}
+ll min(ll a,ll b){return (a>b)?b:a;}
+ll max(ll a,ll b){return (a>b)?a:b;}
+bool prime[1000001];
+vi primes;
+void SieveOfEratosthenes(int n) 
+{ 
+    memset(prime, true, sizeof(prime)); 
+    for (int p=2; p*p<=n; p++) 
+    { 
+        if (prime[p] == true) 
+        { 
+            for (int i=p*p; i<=n; i += p) 
+                prime[i] = false; 
+        } 
+    } 
+    for(int p=2;p<1000001;p++)
+        if(prime[p])
+            primes.pb(p);
+}
+ll fact[100010];
+ll finv[100010];
+void factorial(int n){
+    fact[0]=1;
+    finv[0]=1;
+    for(int i=1;i<=n;i++)
+        fact[i]=fact[i-1]*i,fact[i]%=MOD,finv[i]=fermat_inv(fact[i]);
+}
+ll ncr(ll n,ll r)
+{
+    if(n<r)
+        return 0;
+    else{
+        ll x=finv[r]*finv[n-r]%MOD;
+        return fact[n]*x%MOD;
+    }
+}
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    #ifndef ONLINE_JUDGE
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    #endif
+
+    int te=1;
+    cin>>te;
+    //SieveOfEratosthenes(1000000);
+    //factorial(100005);
+    while(te--){
+        int n,l;
+        cin>>n>>l;
+        double a[n];
+        for(int i=0;i<n;i++)
+            cin>>a[i];
+        double x[n],y[n];
+        x[0]=a[0];
+        int speed=2;
+        for(int i=1;i<n;i++){
+            x[i]=x[i-1]+(a[i]-a[i-1])/speed++;
+        }
+        y[n-1]=l-a[n-1];
+        speed=2;
+        for(int i=n-2;i>=0;i--){
+            y[i]=y[i+1]+(a[i+1]-a[i])/speed++;
+        }
+        /*double l=0,r=l,ans;
+        while(l<=r){
+            double mid=(l+r)/2;
+            double dista=mid,distb=mid;
+            for(int i=0;i<n;i++){
+                if(dista>=a[i])
+            }
+        }*/
+        int i=0;
+        while(x[i]<y[i]&&i<n)
+            i++;
+        double speeda=1+i,speedb=1+(n-i);
+        if(i==0)
+            cout<<setprecision(15)<<y[0]+(a[0]-y[0])/(speeda+speedb)<<'\n';
+        else if(i==n)
+            cout<<setprecision(15)<<x[n-1]+(l-a[n-1]-x[n-1])/(speeda+speedb)<<'\n';
+        else{
+            double dist=a[i]-a[i-1];
+            if(x[i-1]<=y[i]){
+                cout<<setprecision(15)<<y[i]+(dist-speeda*(y[i]-x[i-1]))/(speeda+speedb)<<'\n';
+            }
+            else{
+                cout<<setprecision(15)<<x[i-1]+(dist-speedb*(x[i-1]-y[i]))/(speeda+speedb)<<'\n';
+            }
+        }
+        /*for(int i=0;i<n;i++)
+            cout<<x[i]<<' ';
+        cout<<'\n';
+        for(int i=0;i<n;i++)
+            cout<<y[i]<<' ';
+        cout<<'\n';
+        cout<<i<<' '<<speeda<<' '<<speedb<<'\n';*/
+    }
+}
