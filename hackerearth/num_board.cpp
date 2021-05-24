@@ -69,16 +69,30 @@ int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    #ifndef ONLINE_JUDGE
-        freopen("input.txt", "r", stdin);
-        freopen("output.txt", "w", stdout);
-    #endif
+    // #ifndef ONLINE_JUDGE
+    //     freopen("input.txt", "r", stdin);
+    //     freopen("output.txt", "w", stdout);
+    // #endif
 
     int te=1;
-    cin>>te;
+    //cin>>te;
     //SieveOfEratosthenes(1000000);
     //factorial(1000005);
     while(te--){
-
+        cout<<setprecision(12);
+        ld a,b,c;
+        cin>>a>>b>>c;
+        if(a<=1){
+            cout<<log2(1.0+b*c)<<'\n';
+        }
+        else{
+            ld x=b/(a-1);
+            ll k=ceil((x-1.0)/b);
+            //cout<<x<<' '<<(a-1)*x<<' '<<k<<'\n';
+            if(k>=c)
+                cout<<log2(1.0+b*c)<<'\n';
+            else
+                cout<<log2(1+k*b)+(c-k)*log2(a)<<'\n';
+        }
     }
 }

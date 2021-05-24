@@ -35,18 +35,24 @@ int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    #ifndef ONLINE_JUDGE
-        freopen("input.txt", "r", stdin);
-        freopen("output.txt", "w", stdout);
-    #endif
+    // #ifndef ONLINE_JUDGE
+    //     freopen("input.txt", "r", stdin);
+    //     freopen("output.txt", "w", stdout);
+    // #endif
 
     int te=1;
-    cin>>te;
+    //cin>>te;
     //SieveOfEratosthenes(1000000);
     //factorial(1000005);
     while(te--){
-        int n,k;
-        cin>>n>>k;
-        cout<<(k-1)/(n-1)*n+k-(k-1)/(n-1)*(n-1)<<'\n';
+        ll n,k,d,s;
+        cin>>n>>k>>d>>s;
+        ll tot=n*d,sol=k*s;
+        ld av=tot-sol;
+        av/=(n-k);
+        if(av>100||av<0)
+            cout<<"impossible\n";
+        else
+            cout<<setprecision(12)<<av<<'\n';;
     }
 }

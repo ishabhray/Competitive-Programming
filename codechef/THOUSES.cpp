@@ -30,35 +30,55 @@ ll fermat_inv(ll y){return power(y,MOD-2);}
 ll gcd(ll a, ll b){return (b==0)?a:gcd(b,a%b);}
 ll min(ll a,ll b){return (a>b)?b:a;}
 ll max(ll a,ll b){return (a>b)?a:b;}
-vl prime(10000001,0);
-vi ans(10000001,-1);
-void SieveOfEratosthenes(int n)
-{ 
-    for (int p=1; p<=n; p++)
-    { 
-        for (int i=p; i<=n; i += p) 
-            prime[i]+=p; 
-        if(prime[p]<=n&&ans[prime[p]]==-1)
-            ans[prime[p]]=p;
-    } 
 
+ll ans[300005];
+bool comp(const int &l,const int &r){
+    return ans[l]>ans[r];
+}
+void dfs1(int a,int p,vi adj[]){
+    vi v;
+    for(int i:adj[a]){
+        if(i==p)
+            continue;
+        dfs1(i,a,adj);
+        v.pb(i);
+    }
+    sort(all(v),comp);
+    ans[a]++;
+    ll c=1;
+    for(int i:v){
+        ans[a]+=c*ans[i];
+        c++;
+    }
 }
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    #ifndef ONLINE_JUDGE
-        freopen("input.txt", "r", stdin);
-        freopen("output.txt", "w", stdout);
-    #endif
+    // #ifndef ONLINE_JUDGE
+    //     freopen("input.txt", "r", stdin);
+    //     freopen("output.txt", "w", stdout);
+    // #endif
 
     int te=1;
     cin>>te;
-    SieveOfEratosthenes(10000000);
+    //SieveOfEratosthenes(1000000);
     //factorial(1000005);
     while(te--){
-        int c;
-        cin>>c;
-        cout<<ans[c]<<'\n';
+        ll n,x;
+        cin>>n>>x;
+        vi adj[n];
+        for(int i=1;i<n;i++){
+            int u,v;
+            cin>>u>>v;
+            u--,v--;
+            adj[u].pb(v);
+            adj[v].pb(u);
+        }
+        memset(ans,0,sizeof(ans));
+        dfs1(0,-1,adj);
+        ans[0]%=MOD;
+        (ans[0]*=x)%=MOD;
+        cout<<ans[0]<<'\n';
     }
 }

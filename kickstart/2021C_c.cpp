@@ -69,16 +69,59 @@ int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    #ifndef ONLINE_JUDGE
-        freopen("input.txt", "r", stdin);
-        freopen("output.txt", "w", stdout);
-    #endif
+    // #ifndef ONLINE_JUDGE
+    //     freopen("input.txt", "r", stdin);
+    //     freopen("output.txt", "w", stdout);
+    // #endif
 
     int te=1;
-    cin>>te;
+    ll X;
+    cin>>te>>X;
     //SieveOfEratosthenes(1000000);
     //factorial(1000005);
     for(int T=1;T<=te;T++){
-        cout<<"Case #"<<T<<": "<<ans;
+        int w,e;
+        cin>>w>>e;
+        mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+        string ans="RS";
+        for(int i=0;i<58;i++){
+            int x=rng()%3;
+            if(!x)
+            ans+='R';
+            else if(x==1)
+            ans+='S';
+            else ans+='P';
+        }
+        // if(e==0||e==w/10){
+        //     ans="RSP";
+        //     for(int i=0;i<19;i++){
+        //         vv<char>curr={'R','S','P'};
+        //         int x=rng()%3;
+        //         ans+=curr[x];
+        //         curr.erase(curr.begin()+x);
+        //         x=rng()%2;
+        //         ans+=curr[x];
+        //         curr.erase(curr.begin()+x);
+        //         ans+=curr[0];
+        //     }
+        // }
+        // else{
+        //     ans="RS";
+        //     for(int i=0;i<29;i++){
+        //         // vv<char>curr={'R','S','P'};
+        //         // int x=rng()%3;
+        //         // ans+=curr[x];
+        //         // curr.erase(curr.begin()+x);
+        //         // x=rng()%2;
+        //         // ans+=curr[x];
+        //         // curr.erase(curr.begin()+x);
+        //         // ans+=curr[0];
+        //         if(rng()%2)
+        //             ans+="RS";
+        //         else
+        //             ans+="SR";
+        //     }
+        // }
+        cout<<"Case #"<<T<<": "<<ans<<'\n';
     }
 }

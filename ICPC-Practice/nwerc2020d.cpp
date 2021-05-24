@@ -67,35 +67,38 @@ ll ncr(ll n,ll r)
 }
 int main()
 {
+    mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    #ifndef ONLINE_JUDGE
-        freopen("input.txt", "r", stdin);
-        freopen("output.txt", "w", stdout);
-    #endif
+    // #ifndef ONLINE_JUDGE
+    //     freopen("input.txt", "r", stdin);
+    //     freopen("output.txt", "w", stdout);
+    // #endif
 
     int te=1;
     cin>>te;
     //SieveOfEratosthenes(1000000);
     //factorial(1000005);
     while(te--){
-        int n,k;
-        cin>>n>>k;
-        if(n==k){
-            for(int i=0;i<n;i++)
-                cout<<"1 ";
-            cout<<'\n';
-            continue;
-        }
-        for(int i=0;i<k;i++){
-            if((n-i)%(k-i)==0){
-                for(int j=0;j<i;j++)
-                    cout<<"1 ";
-                for(int j=0;j<k-i;j++)
-                    cout<<(n-i)/(k-i)<<' ';
-                cout<<'\n';
-                break;
-            }
+        ll c=-1,d=-1;
+        while(c!=0){
+            ll a=rng()%100,b=rng()%100;
+            cout<<a<<' '<<b<<endl;
+            cin>>c;
+            cout<<a+1<<' '<<b<<endl;
+            cin>>d;
+            ll x=c-d+2*a+1;
+            x/=2;
+            ll z=c-(x-a)*(x-a);
+            z=sqrt(z);
+            ll y=b+z;
+            cout<<x<<' '<<y<<endl;
+            cin>>c;
+            if(c==0)
+                continue;
+            y=b-z;
+            cout<<x<<' '<<y<<endl;
+            cin>>c;
         }
     }
 }
