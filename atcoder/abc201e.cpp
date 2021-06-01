@@ -30,24 +30,42 @@ ll fermat_inv(ll y){return power(y,MOD-2);}
 ll gcd(ll a, ll b){return (b==0)?a:gcd(b,a%b);}
 ll min(ll a,ll b){return (a>b)?b:a;}
 ll max(ll a,ll b){return (a>b)?a:b;}
-ll dp[200005][60];
-vi adj[200005];
-map<ii,ll>wt;
+ll dp[200005][60][2];
+vv<pll>adj[200005];
 ll ans=0;
 void dfs(int a,int p){
-    for(int i:adj[a]){
-        if(i==p)
+    for(auto i:adj[a]){
+        if(i.ff==p)
             continue;
-        dfs(i,a);
+        dfs(i.ff,a);
     }
     for(ll j=0;j<60;j++){
-        for(auto i:adj[a]){
+        for(auto x:adj[a]){
+            ll wt=x.ss,i=x.ff;
             if(i==p)
                 continue;
-            if(wt[{a,i}]&(1ll<<j)){
-                
+            // cout<<dp[a][j][0]<<' '<<dp[a][j][1]<<' '<<dp[i][j][0]<<' '<<dp[i][j][1]<<'\n';
+            if(wt&(1ll<<j)){
+                (ans+=(1ll<<j)%MOD*(dp[i][j][0]*dp[a][j][0]%MOD+dp[i][j][1]*dp[a][j][1]%MOD)%MOD)%=MOD;
+                dp[a][j][0]+=dp[i][j][1];
+                dp[a][j][1]+=dp[i][j][0];
+            }
+            else{
+                (ans+=(1ll<<j)%MOD*(dp[i][j][0]*dp[a][j][1]%MOD+dp[i][j][1]*dp[a][j][0]%MOD)%MOD)%=MOD;
+                dp[a][j][0]+=dp[i][j][0];
+                dp[a][j][1]+=dp[i][j][1];
             }
         }
+        // cout<<j<<' '<<ans<<' ';
+        dp[a][j][0]++;
+        for(auto x:adj[a]){
+            ll wt=x.ss,i=x.ff;
+            if(wt&(1ll<<j))
+                (ans+=(1ll<<j)%MOD*dp[i][j][0]%MOD)%=MOD;
+            else
+                (ans+=(1ll<<j)%MOD*dp[i][j][1]%MOD)%=MOD;
+        }
+        // cout<<ans<<'\n';
     }
 }
 
@@ -71,10 +89,8 @@ int main()
             ll u,v,w;
             cin>>u>>v>>w;
             u--,v--;
-            adj[u].pb(v);
-            adj[v].pb(u);
-            wt[{u,v}]=w;
-            wt[{v,u}]=w;
+            adj[u].pb({v,w});
+            adj[v].pb({u,w});
         }
         dfs(0,-1);
         cout<<ans<<'\n';
