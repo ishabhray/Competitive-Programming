@@ -69,52 +69,27 @@ int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    #ifndef ONLINE_JUDGE
-        freopen("input.txt", "r", stdin);
-        freopen("output.txt", "w", stdout);
-    #endif
+    // #ifndef ONLINE_JUDGE
+    //     freopen("input.txt", "r", stdin);
+    //     freopen("output.txt", "w", stdout);
+    // #endif
 
     int te=1;
-    //cin>>te;
+    cin>>te;
     //SieveOfEratosthenes(1000000);
     //factorial(1000005);
     while(te--){
-        int n;
-        cin>>n;
-        int cnt[11][11];
-        memset(cnt,0,sizeof(cnt));
-        bool ans=true;
+        ll n,q;
+        cin>>n>>q;
+        vv<string>s(n);
+        for(auto &i:s) cin>>i;
+        ll dp[26][26];
+        memset(dp,0,sizeof(dp));
         for(int i=0;i<n;i++){
-            int d,l,r,c;
-            cin>>d>>l>>r>>c;
-            if(d){
-                if(r+l-1>10){
-                    ans=false;
-                    continue;
-                }
-                for(int j=0;j<l;j++)
-                    cnt[r+j][c]++;
-            }
-            else{
-                if(c+l-1>10){
-                    ans=false;
-                    continue;
-                }
-                for(int j=0;j<l;j++)
-                    cnt[r][c+j]++;
-            }
+            ll curr[26][26];
+            memset(curr,0,sizeof(curr));
+
+            for(int i=0;i<26;i++) for(int j=0;j<26;j++) dp[i][j]=max(dp[i][j],curr[i][j]);
         }
-        for(int i=0;i<=10;i++){
-            for(int j=0;j<=10;j++){
-                if(cnt[i][j]>1)
-                    ans=false;
-                //cout<<cnt[i][j];
-            }
-            //cout<<'\n';
-        }
-        if(ans)
-            cout<<"Y";
-        else
-            cout<<"N";
     }
 }
