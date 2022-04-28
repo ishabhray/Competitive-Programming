@@ -15,16 +15,7 @@ using namespace std;
 #define vv vector
 #define all(v) (v).begin(),(v).end()
 #define MAXN 300005
-ll t[4*MAXN];
-vi v[MAXN];
-int cnt_in_range(int a,int l,int r){
-    auto x=lower_bound(all(v[a]),l);
-    auto y=upper_bound(all(v[a]),r);
-    if(y==v[a].begin())
-        return 0;
-    y--;
-    return y-x+1;
-}
+ll n,t[4*MAXN];
 void build(int a[],int v,int tl,int tr)
 {
     if(tl==tr)
@@ -33,10 +24,7 @@ void build(int a[],int v,int tl,int tr)
         int tm=(tl+tr)/2;
         build(a,v*2,tl,tm);
         build(a,v*2+1,tm+1,tr);
-        if(cnt_in_range(t[2*v],tl,tr)>cnt_in_range(t[2*v+1],tl,tr))
-            t[v]=t[2*v];
-        else
-            t[v]=t[2*v+1];
+        t[v]=t[v*2]+t[v*2+1];
     }
 }
 ll sum(int v,int tl,int tr,int l,int r)
@@ -46,11 +34,20 @@ ll sum(int v,int tl,int tr,int l,int r)
     if(l==tl&&r==tr)
         return t[v];
     int tm=(tl+tr)/2;
-    int x=sum(v*2,tl,tm,l,min(r,tm));
-    int y=sum(v*2+1,tm+1,tr,max(l,tm+1),r);
-    if(cnt_in_range(x,l,r)>cnt_in_range(y,l,r))
-        return x;
-    else return y;
+    return sum(v*2,tl,tm,l,min(r,tm))+sum(v*2+1,tm+1,tr,max(l,tm+1),r);
+}
+void update(int v,int tl,int tr,int pos,int new_val)
+{
+    if(tl==tr)
+        t[v]=new_val;
+    else{
+        int tm=(tl+tr)/2;
+        if(pos<=tm)
+            update(2*v,tl,tm,pos,new_val);
+        else
+            update(2*v+1,tm+1,tr,pos,new_val);
+        t[v]=t[2*v]+t[2*v+1];
+    }
 }
 int main()
 {
@@ -71,17 +68,7 @@ int main()
         int a[n+1];
         for(int i=1;i<=n;i++){
             cin>>a[i];
-            v[a[i]].pb(i);
         }
         build(a,1,1,n);
-        for(int i=0;i<q;i++){
-            int l,r;
-            cin>>l>>r;
-            int x=cnt_in_range(sum(1,1,n,l,r),l,r);
-            if(x<=(r-l+1)/2)
-                cout<<1<<'\n';
-            else
-                cout<<2*x-(r-l+1)<<'\n';
-        }
     }
 }

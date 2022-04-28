@@ -35,7 +35,7 @@ void build(ll a[],ll v,ll tl,ll tr)
         ll tm=(tl+tr)/2;
         build(a,v*2,tl,tm);
         build(a,v*2+1,tm+1,tr);
-        t[v]=min(t[v*2],t[v*2+1]);
+        t[v]=t[v*2]+t[v*2+1];
     }
 }
 ll sum(ll v,ll tl,ll tr,ll l,ll r)

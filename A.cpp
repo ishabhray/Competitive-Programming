@@ -3,6 +3,11 @@ using namespace std;
 
 #define ll long long int
 ll dp[1005][1005][10];
+ll a[5]={1,3,4,5,6};
+
+void fun(ll a[]){
+    for(int i=0;i<5;i++) a[i]+=5;
+}
 
 int main(){
     // ll n,k;
@@ -30,5 +35,9 @@ int main(){
     // ll ans=0;
     // for(int i=0;i<=k;i++) for(int j=0;j<8;j++) ans=max(ans,dp[n][i][j]);
     // cout<<ans<<'\n';
-    cout<<sizeof(void)<<'\n';
+    for(int i=0;i<5;i++) cout<<a[i]<<' ';
+    cout<<'\n';
+    fun(a);
+    for(int i=0;i<5;i++) cout<<a[i]<<' ';
+    cout<<'\n';
 }

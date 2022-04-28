@@ -1,154 +1,123 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define PI 3.14159265358979323
+
+#define PI 3.141592653589
 #define ll long long int
-#define vi vector <int>
-#define vl vector <ll>
-#define all(v) (v).begin(),(v).end()
+#define ld long double
+#define vi vector<int>
+#define vl vector<ll>
+#define ii pair<int,int>
 #define pb push_back
+#define mp make_pair
 #define ff first
 #define ss second
-#define MOD 1000000007
-ll power(ll a, ll b) { //a^b
-    ll res = 1;
-    a = a % MOD;
-    while (b > 0) {
-        if (b & 1) {res = (res * a) % MOD; b--;}
-        a = (a * a) % MOD;
-        b >>= 1;
+#define pll pair<ll,ll>
+#define vv vector
+#define all(v) (v).begin(),(v).end()
+#define MAXN 300005
+int MOD=1e9+7;
+ll power(ll a, ll b){//a^b
+    ll res=1;
+    a=a%MOD;
+    while(b>0){
+        if(b&1){res=(res*a)%MOD;b--;}
+        a=(a*a)%MOD;
+        b>>=1;
     }
     return res;
 }
-
-ll gcd(ll a, ll b) {return (b == 0) ? a : gcd(b, a % b);}
-
-vector <pair<ll, ll>> edges;
-vector <vl> adj(100005);
-vl a(100005);
-vl cnt(100005);
-vl col(100005);
-vl p(100005);
-vl siz(100005);
-
-ll get(ll u) {
-    return p[u] = ((p[u] == u) ? u : get(p[u]));
+ll fermat_inv(ll y){return power(y,MOD-2);}
+ll gcd(ll a, ll b){return (b==0)?a:gcd(b,a%b);}
+ll min(ll a,ll b){return (a>b)?b:a;}
+ll max(ll a,ll b){return (a>b)?a:b;}
+bool prime[1000001];
+vi primes;
+void SieveOfEratosthenes(int n) 
+{ 
+    memset(prime, true, sizeof(prime));
+    prime[0]=prime[1]=0;
+    for (int p=2; p*p<=n; p++) 
+    { 
+        if (prime[p] == true) 
+        { 
+            for (int i=p*p; i<=n; i += p) 
+                prime[i] = false; 
+        } 
+    } 
+    for(int p=2;p<n;p++)
+        if(prime[p])
+            primes.pb(p);
 }
-
-void unions(ll u, ll v) {
-    u = get(u);
-    v = get(v);
-    if (siz[u] > siz[v])
-        swap(u, v);
-    p[u] = v;
-    siz[v] += siz[u];
-}
-
-void dfs(ll u, ll c, ll comp) {
-    for (auto i : adj[u]) {
-        if (col[i] == -1) {
-            col[i] = 1 - c;
-            cnt[i] = comp;
-            edges.pb({u, i});
-            dfs(i, col[i], comp);
+void solve(int m){
+    MOD=m;
+    for(int x=3;x<m;x++){
+        for(int y=3;y<m;y++){
+            for(int z=3;z<m;z++){
+                for(int n=3;n<m;n++){
+                    if((power(x,n)+power(y,n))%m==power(z,n)){
+                        cout<<"FOUND\n"<<x<<' '<<y<<' '<<z<<' '<<n<<'\n';
+                        return;
+                    }
+                }
+            }
         }
     }
+    cout<<"LOST THEOREM\n";
 }
-
-int main() {
+int main()
+{
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    ll t;
-    cin >> t;
-    while (t--) {
-        ll n, m;
-        cin >> n >> m;
-        edges.clear();
-        for (ll i = 0; i < n; i++) {
-            adj[i].clear();
-            col[i] = -1;
-            cnt[i] = -1;
-            p[i] = i;
-            siz[i] = 1;
+    // #ifndef ONLINE_JUDGE
+    //     freopen("input.txt", "r", stdin);
+    //     freopen("output.txt", "w", stdout);
+    // #endif
+
+    int te=1;
+    cin>>te;
+    SieveOfEratosthenes(100000);
+    //factorial(1000005);
+    while(te--){
+        int m;
+        cin>>m;
+        if(m<50){
+            solve(m);
+            continue;
         }
-        for (ll i = 0; i < n; i++)
-            cin >> a[i];
-        for (ll i = 0; i < m; i++) {
-            ll u, v;
-            cin >> u >> v;
-            u--;
-            v--;
-            adj[u].pb(v);
-            adj[v].pb(u);
-        }
-        ll comp = 0;
-        for (ll i = 0; i < n; i++) {
-            if (col[i] == -1) {
-                col[i] = 0;
-                cnt[i] = comp;
-                dfs(i, col[i], comp);
-                comp++;
+        int temp=m;
+        map<int,int>mp;
+        for(int i:primes){
+            if(i>m) break;
+            while(m%i==0){
+                m/=i;
+                mp[i]++;
             }
         }
-        vector <vl> hav(comp);
-        set<pair<ll, pair<ll, ll>>> r;
-        for (ll i = 0; i < n; i++) {
-            r.insert({a[i], {i, cnt[i]}});
-            hav[cnt[i]].pb(i);
+        if(m>1) mp[m]++;
+        m=temp;
+        int mx=0;
+        ll x=1;
+        for(auto i:mp){
+            x*=i.ff;
+            mx=max(mx,i.ss);
         }
-        ll ans = 0;
-        ll vis = 0;
-        ll cur = 0;
-        vector <pair<ll, pair<ll, ll>>> mst;
-        while (vis < comp) {
-            for (auto j : hav[cur]) {
-                r.erase({a[j], {j, cur}});
-            }
-            for (auto j : hav[cur]) {
-                auto it = r.lower_bound({a[j], { -1, -1}});
-                if (it != r.end()) {
-                    auto her = *it;
-                    ll cost = her.ff - a[j];
-                    mst.pb({cost, {j, her.ss.ff}});
-                }
-                if (it != r.begin()) {
-                    it--;
-                    auto her = *it;
-                    ll cost = a[j] - her.ff;
-                    mst.pb({cost, {j, her.ss.ff}});
-                }
-            }
-            for (auto j : hav[cur]) {
-                r.insert({a[j], {j, cur}});
-            }
-            cur++;
-            vis++;
+        if(mx>1){
+            cout<<"FOUND\n";
+            if(x==2) x*=2;
+            cout<<x<<' '<<x<<' '<<x<<' '<<mx+1<<'\n';
         }
-        for (ll i = 0; i < comp; i++) {
-            ll k = hav[i].size();
-            for (ll j = 1; j < k; j++) {
-                ll u, v;
-                u = hav[i][j - 1];
-                v = hav[i][j];
-                u = get(u);
-                v = get(v);
-                unions(u, v);
+        else if(mp.size()>1){
+            cout<<"FOUND\n";
+            ll o=1;
+            for(auto i:mp){
+                o*=(i.ff-1);
             }
+            cout<<3<<' '<<3<<' '<<6<<' '<<o+1<<'\n';
         }
-        for (auto i : mst) {
-            ll u, v;
-            u = i.ss.ff;
-            v = i.ss.ss;
-            u = get(u);
-            v = get(v);
-            if (u == v)
-                continue;
-            ans += i.ff;
-            edges.pb({i.ss.ff, i.ss.ss});
-            unions(u, v);
+        else{
+            MOD=m;
+            ll inv2=fermat_inv(2),inv4=fermat_inv(4);
+            cout<<"FOUND\n"<<inv2<<' '<<inv2<<' '<<inv4<<' '<<m-2<<'\n';
         }
-        m = edges.size();
-        cout << ans << " " << m << "\n";
-        for (auto i : edges)
-            cout << i.ff + 1 << " " << i.ss + 1 << "\n";
     }
 }

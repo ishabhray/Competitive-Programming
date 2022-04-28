@@ -30,41 +30,6 @@ ll fermat_inv(ll y){return power(y,MOD-2);}
 ll gcd(ll a, ll b){return (b==0)?a:gcd(b,a%b);}
 ll min(ll a,ll b){return (a>b)?b:a;}
 ll max(ll a,ll b){return (a>b)?a:b;}
-bool prime[1000001];
-vi primes;
-void SieveOfEratosthenes(int n) 
-{ 
-    memset(prime, true, sizeof(prime));
-    prime[0]=prime[1]=0;
-    for (int p=2; p*p<=n; p++) 
-    { 
-        if (prime[p] == true) 
-        { 
-            for (int i=p*p; i<=n; i += p) 
-                prime[i] = false; 
-        } 
-    } 
-    for(int p=2;p<1000001;p++)
-        if(prime[p])
-            primes.pb(p);
-}
-ll fact[1000010];
-ll finv[1000010];
-void factorial(int n){
-    fact[0]=1;
-    finv[0]=1;
-    for(int i=1;i<=n;i++)
-        fact[i]=fact[i-1]*i,fact[i]%=MOD,finv[i]=fermat_inv(fact[i]);
-}
-ll ncr(ll n,ll r)
-{
-    if(n<r)
-        return 0;
-    else{
-        ll x=finv[r]*finv[n-r]%MOD;
-        return fact[n]*x%MOD;
-    }
-}
 int main()
 {
     ios_base::sync_with_stdio(false);
@@ -81,22 +46,34 @@ int main()
     while(te--){
         int n,k,s;
         cin>>n>>k>>s;
-        int a[n];
+        ll a[n];
         for(auto &i:a) cin>>i;
-        int next[n];
-        for(int i=0;i<n;i++) next[i]=n;
-        queue<int>q;
-        int curr=0;
+        vv<vi> next(n+1,vi(20,n));
+        queue<ll>q;
+        ll curr=0;
         for(int i=0;i<n;i++){
             curr+=a[i];
             q.push(i);
             while(curr>s){
                 curr-=a[q.front()];
-                next[q.front()]=i;
+                next[q.front()][0]=i;
+                if(q.size()==0) return 0;
                 q.pop();
             }
         }
-        for(int i=0;i<n;i++) cout<<next[i]<<' ';
-        cout<<'\n';
+        for(int i=1;i<20;i++){
+            for(int j=0;j<n;j++){
+                next[j][i]=next[next[j][i-1]][i-1];
+            }
+        }
+        int ans=0;
+        for(int i=0;i<n;i++){
+            int c=i;
+            for(int j=0;j<20;j++){
+                if(k&(1<<j)) c=next[c][j];
+            }
+            ans=max(ans,c-i);
+        }
+        cout<<ans<<'\n';
     }
 }

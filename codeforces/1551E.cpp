@@ -30,41 +30,7 @@ ll fermat_inv(ll y){return power(y,MOD-2);}
 ll gcd(ll a, ll b){return (b==0)?a:gcd(b,a%b);}
 ll min(ll a,ll b){return (a>b)?b:a;}
 ll max(ll a,ll b){return (a>b)?a:b;}
-bool prime[1000001];
-vi primes;
-void SieveOfEratosthenes(int n) 
-{ 
-    memset(prime, true, sizeof(prime));
-    prime[0]=prime[1]=0;
-    for (int p=2; p*p<=n; p++) 
-    { 
-        if (prime[p] == true) 
-        { 
-            for (int i=p*p; i<=n; i += p) 
-                prime[i] = false; 
-        } 
-    } 
-    for(int p=2;p<1000001;p++)
-        if(prime[p])
-            primes.pb(p);
-}
-ll fact[1000010];
-ll finv[1000010];
-void factorial(int n){
-    fact[0]=1;
-    finv[0]=1;
-    for(int i=1;i<=n;i++)
-        fact[i]=fact[i-1]*i,fact[i]%=MOD,finv[i]=fermat_inv(fact[i]);
-}
-ll ncr(ll n,ll r)
-{
-    if(n<r)
-        return 0;
-    else{
-        ll x=finv[r]*finv[n-r]%MOD;
-        return fact[n]*x%MOD;
-    }
-}
+
 int main()
 {
     ios_base::sync_with_stdio(false);
@@ -79,6 +45,33 @@ int main()
     //SieveOfEratosthenes(1000000);
     //factorial(1000005);
     while(te--){
-
+        int n,k;
+        cin>>n>>k;
+        int a[n+1];
+        for(int i=1;i<=n;i++) cin>>a[i];
+        int dp[n+1][n+1];
+        for(int i=0;i<=n;i++) for(int j=0;j<=n;j++) dp[i][j]=0;
+        for(int i=1;i<=n;i++){
+            for(int j=0;j<=n;j++){
+                dp[i][j]=dp[i-1][j];
+            }
+            for(int j=1;j<=n;j++) dp[i][j]=max(dp[i][j],dp[i-1][j-1]);
+            if(i==a[i]) dp[i][0]++;
+            if(i>a[i]){
+                for(int j=a[i]-1;j<i;j++) dp[i][i-a[i]]=max(dp[i][i-a[i]],dp[j][j-a[i]+1]+1);
+            }
+        }
+        int ans=1e8;
+        // for(int i=0;i<=n;i++){
+        //     for(int j=0;j<=n;j++) cout<<dp[i][j]<<' ';
+        //     cout<<'\n';
+        // }
+        for(int j=0;j<=n;j++){
+            for(int i=1;i<=n;i++){
+                if(dp[i][j]>=k) ans=min(ans,j);
+            }
+        }
+        if(ans==1e8) ans=-1;
+        cout<<ans<<'\n';
     }
 }

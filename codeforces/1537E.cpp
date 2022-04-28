@@ -97,8 +97,11 @@ int main()
         string ans="";
         for(int i=0;i<k;i++)
             ans+=s[0];
+        string curr="";
+        curr+=s[0];
+        string x=curr;
         for(int i=1;i<n;i++){
-            string curr="";
+            curr+=s[i];
             for(int j=0;j<k;j++){
                 curr+=s[j%(i+1)];
             }

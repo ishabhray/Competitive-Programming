@@ -30,14 +30,39 @@ ll fermat_inv(ll y){return power(y,MOD-2);}
 ll gcd(ll a, ll b){return (b==0)?a:gcd(b,a%b);}
 ll min(ll a,ll b){return (a>b)?b:a;}
 ll max(ll a,ll b){return (a>b)?a:b;}
-vi adj[100005];
-vv<ii>edges;
-void dfs(int a,int col[],int c){
-    col[a]=c;
-    for(int i:adj[a]){
-        if(col[i]) continue;
-        edges.pb({a,i});
-        dfs(i,col,c);
+bool prime[1000001];
+vi primes;
+void SieveOfEratosthenes(int n) 
+{ 
+    memset(prime, true, sizeof(prime));
+    prime[0]=prime[1]=0;
+    for (int p=2; p*p<=n; p++) 
+    { 
+        if (prime[p] == true) 
+        { 
+            for (int i=p*p; i<=n; i += p) 
+                prime[i] = false; 
+        } 
+    } 
+    for(int p=2;p<1000001;p++)
+        if(prime[p])
+            primes.pb(p);
+}
+ll fact[1000010];
+ll finv[1000010];
+void factorial(int n){
+    fact[0]=1;
+    finv[0]=1;
+    for(int i=1;i<=n;i++)
+        fact[i]=fact[i-1]*i,fact[i]%=MOD,finv[i]=fermat_inv(fact[i]);
+}
+ll ncr(ll n,ll r)
+{
+    if(n<r)
+        return 0;
+    else{
+        ll x=finv[r]*finv[n-r]%MOD;
+        return fact[n]*x%MOD;
     }
 }
 int main()
@@ -54,31 +79,6 @@ int main()
     //SieveOfEratosthenes(1000000);
     //factorial(1000005);
     while(te--){
-        ll n,m;
-        cin>>n>>m;
-        for(int i=0;i<n;i++) adj[i].clear();
-        ll a[n];
-        for(auto &i:a) cin>>i;
-        for(int i=0;i<m;i++){
-            int u,v;
-            cin>>u>>v;
-            u--,v--;
-            adj[u].pb(v);
-            adj[v].pb(u);
-        }
-        int col[n]={0};
-        int comp=0;
-        for(int i=0;i<n;i++){
-            if(col[i]) continue;
-            comp++;
-            dfs(i,col,comp);
-        }
-        vi hav[comp+1];
-        for(int i=0;i<n;i++){
-            hav[col[i]].pb(i);
-        }
-        for(auto i:edges) cout<<i.ff<<' '<<i.ss<<'\n';
-        cout<<comp;
-        for(auto i:hav) {for(auto j:i) cout<<j<<' '; cout<<'\n';}
+
     }
 }
