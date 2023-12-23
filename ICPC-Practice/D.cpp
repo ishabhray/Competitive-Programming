@@ -65,6 +65,25 @@ ll ncr(ll n,ll r)
         return fact[n]*x%MOD;
     }
 }
+int p[200005];
+int get(int a){
+    return p[a]=(p[a]==a)?a:get(p[a]);
+}
+void uni(int a,int b){
+    a=get(a);
+    b=get(b);
+    p[a]=b;
+}
+set<ll>ans;
+int dfs(int a,int p,vl adj[],ll n){
+    ll curr=0;
+    for(ll i:adj[a]){
+        if(i==p) continue;
+        curr=max(curr,1+dfs(i,a,adj,n));
+    }
+    if(curr*curr>=n) ans.insert(a+1),curr=-1;
+    return curr;
+}
 int main()
 {
     ios_base::sync_with_stdio(false);
@@ -79,6 +98,25 @@ int main()
     //SieveOfEratosthenes(1000000);
     //factorial(1000005);
     while(te--){
-
+        ll n,m;
+        cin>>n>>m;
+        vl adj[n];
+        ans.clear();
+        for(ll i=0;i<n;i++) p[i]=i;
+        for(ll i=0;i<m;i++){
+            ll u,v;
+            cin>>u>>v;
+            u--,v--;
+            if(get(u)==get(v)) continue;
+            adj[u].pb(v);
+            adj[v].pb(u);
+            uni(u,v);
+        }
+        // int mxd[n]={0};
+        dfs(0,0,adj,n);
+        ans.insert(1);
+        cout<<ans.size()<<'\n';
+        for(ll i:ans) cout<<i<<' ';
+        cout<<'\n';
     }
 }

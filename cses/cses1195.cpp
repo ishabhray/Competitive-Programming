@@ -67,18 +67,19 @@ ll ncr(ll n,ll r)
 }
 
 void djik(int a,ll dist[],vv<pll> adj[]){
-    priority_queue<pll>q;
-    q.push({0,a});
+    set<pll>q;
+    q.insert({0,a});
     dist[a]=0;
     while(!q.empty()){
-        auto z=q.top();
-        q.pop();
-        ll x=z.ss,w=-z.ff;
+        auto z=*q.begin();
+        q.erase(q.begin());
+        ll x=z.ss,w=z.ff;
         for(auto i:adj[x]){
             if(dist[i.ff]<=w+i.ss)
                 continue;
+            q.erase({dist[i.ff],i.ff});
             dist[i.ff]=w+i.ss;
-            q.push({-dist[i.ff],i.ff});
+            q.insert({dist[i.ff],i.ff});
         }
     }
 }
@@ -86,11 +87,7 @@ int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    #ifndef ONLINE_JUDGE
-        freopen("input.txt", "r", stdin);
-        freopen("output.txt", "w", stdout);
-    #endif
-
+    
     int te=1;
     //cin>>te;
     //SieveOfEratosthenes(1000000);
@@ -106,10 +103,6 @@ int main()
             adj[u].pb({v,w});
             adj1[v].pb({u,w});
             edges[i]={{u,v},w};
-        }
-        if(n==60003&&m==120000){
-            cout<<45017;
-            return 0;
         }
         ll dista[n+1],distb[n+1];
         for(int i=0;i<=n;i++)

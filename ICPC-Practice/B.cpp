@@ -30,111 +30,51 @@ ll fermat_inv(ll y){return power(y,MOD-2);}
 ll gcd(ll a, ll b){return (b==0)?a:gcd(b,a%b);}
 ll min(ll a,ll b){return (a>b)?b:a;}
 ll max(ll a,ll b){return (a>b)?a:b;}
-char ans[25][25];
-int n,m;
-void fill12(int i,int j){
-    char c='A';
-    set<char>s;
-    if(j){
-        s.insert(ans[i][j-1]);
-    }
-    if(j+2<m){
-        s.insert(ans[i][j+2]);
-    }
-    if(i){
-        s.insert(ans[i-1][j]);
-        s.insert(ans[i-1][j+1]);
-    }
-    if(i+1<n){
-        s.insert(ans[i+1][j]);
-        s.insert(ans[i+1][j+1]);
-    }
-    while(s.find(c)!=s.end()) c++;
-    ans[i][j]=ans[i][j+1]=c;
+bool prime[1000001];
+vi primes;
+void SieveOfEratosthenes(int n) 
+{ 
+    memset(prime, true, sizeof(prime));
+    prime[0]=prime[1]=0;
+    for (int p=2; p*p<=n; p++) 
+    { 
+        if (prime[p] == true) 
+        { 
+            for (int i=p*p; i<=n; i += p) 
+                prime[i] = false; 
+        } 
+    } 
+    for(int p=2;p<1000001;p++)
+        if(prime[p])
+            primes.pb(p);
 }
-void fill21(int i,int j){
-    char c='A';
-    set<char>s;
-    if(j){
-        s.insert(ans[i][j-1]);
-        s.insert(ans[i+1][j-1]);
-    }
-    if(j+1<m){
-        s.insert(ans[i][j+1]);
-        s.insert(ans[i+1][j+1]);
-    }
-    if(i){
-        s.insert(ans[i-1][j]);
-    }
-    if(i+2<n){
-        s.insert(ans[i+2][j]);
-    }
-    while(s.find(c)!=s.end()) c++;
-    ans[i][j]=ans[i+1][j]=c;
+ll fact[1000010];
+ll finv[1000010];
+void factorial(int n){
+    fact[0]=1;
+    finv[0]=1;
+    for(int i=1;i<=n;i++)
+        fact[i]=fact[i-1]*i,fact[i]%=MOD,finv[i]=fermat_inv(fact[i]);
 }
-void fill13(int i,int j){
-    char c='A';
-    set<char>s;
-    if(j){
-        s.insert(ans[i][j-1]);
-    }
-    if(j+3<m){
-        s.insert(ans[i][j+3]);
-    }
-    if(i){
-        s.insert(ans[i-1][j]);
-        s.insert(ans[i-1][j+1]);
-        s.insert(ans[i-1][j+2]);
-    }
-    if(i+1<n){
-        s.insert(ans[i+1][j]);
-        s.insert(ans[i+1][j+1]);
-        s.insert(ans[i+1][j+2]);
-    }
-    while(s.find(c)!=s.end()) c++;
-    ans[i][j]=ans[i][j+1]=ans[i][j+2]=c;
-}
-void fill31(int i,int j){
-    char c='A';
-    set<char>s;
-    if(j){
-        s.insert(ans[i][j-1]);
-        s.insert(ans[i+1][j-1]);
-        s.insert(ans[i+2][j-1]);
-    }
-    if(j+1<m){
-        s.insert(ans[i][j+1]);
-        s.insert(ans[i+1][j+1]);
-        s.insert(ans[i+2][j+1]);
-    }
-    if(i){
-        s.insert(ans[i-1][j]);
-    }
-    if(i+3<n){
-        s.insert(ans[i+3][j]);
-    }
-    while(s.find(c)!=s.end()) c++;
-    ans[i][j]=ans[i+1][j]=ans[i+2][j]=c;
-}
-void fill_row(int i,int j,int x){
-    if((x-j+1)%2==0){
-        for(int k=j;k<x;k+=2) fill12(i,k);
-    }
+ll ncr(ll n,ll r)
+{
+    if(n<r)
+        return 0;
     else{
-        fill13(i,j);
-        j+=3;
-        for(int k=j;k<x;k+=2) fill12(i,k);
+        ll x=finv[r]*finv[n-r]%MOD;
+        return fact[n]*x%MOD;
     }
 }
-void fill_col(int i,int j,int x){
-    if((x-i+1)%2==0){
-        for(int k=i;k<x;k+=2) fill21(k,j);
-    }
-    else{
-        fill31(i,j);
-        i+=3;
-        for(int k=i;k<x;k+=2) fill21(k,j);
-    }
+int p[200005],nxt[200005];
+int get(int x){
+    return p[x]=(p[x]==x)?x:get(p[x]);
+}
+int get1(int x){
+    return nxt[x]=(nxt[x]==x)?x:get1(nxt[x]);
+}
+void uni(int a,int b){
+    a=get(a),b=get(b);
+    p[a]=b;
 }
 int main()
 {
@@ -146,46 +86,30 @@ int main()
     // #endif
 
     int te=1;
-    cin>>te;
+    // cin>>te;
     //SieveOfEratosthenes(1000000);
     //factorial(1000005);
-
     while(te--){
-        int x,y;
-        cin>>n>>m>>x>>y;
-        x--,y--;
-        for(int i=0;i<n;i++){
-            for(int j=0;j<m;j++) ans[i][j]='$';
+        int n,q;
+        cin>>n>>q;
+        vv<pll>x,y;
+        for(int i=0;i<q;i++){
+            int t,l,r;
+            cin>>t>>l>>r;
+            if(t==1) x.pb({l,r});
+            else y.pb({l,r});
         }
-        ans[x][y]='*';
-        if(!y||y==m-1){
-            for(int i=0;i<n;i++){
-                if(i==x) continue;
-                fill_row(i,0,m-1);
+        for(int i=1;i<=n+1;i++) p[i]=i,nxt[i]=i;
+        for(auto z:x){
+            int l=z.ff,r=z.ss;
+            l=get1(l);
+            while(l+1<=r){
+                uni(l,l+1);
+                nxt[l]=nxt[l+1];
+                l=get1(l);
             }
-            if(!y) fill_row(x,1,m-1);
-            else fill_row(x,0,m-2);
         }
-        else if(!x||x==n-1){
-            for(int i=0;i<m;i++){
-                if(i==y) continue;
-                fill_col(0,i,n-1);
-            }
-            if(!x) fill_col(1,y,n-1);
-            else fill_col(0,y,n-2);
-        }
-        else{
-            for(int i=0;i<x;i++) fill_row(i,0,y);
-            for(int i=y+1;i<m;i++) fill_col(0,i,x);
-            for(int i=x+1;i<n;i++) fill_row(i,y,m-1);
-            for(int i=0;i<y;i++) fill_col(x,i,n-1);
-        }
-        cout<<"YES\n";
-        for(int i=0;i<n;i++){
-            for(int j=0;j<m;j++){
-                cout<<ans[i][j];
-            }
-            cout<<'\n';
-        }
+        for(int i=1;i<=n;i++) cout<<get1(i)<<' ';
+        cout<<'\n';
     }
 }

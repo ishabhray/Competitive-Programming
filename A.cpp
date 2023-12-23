@@ -1,43 +1,121 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#define PI 3.141592653589
 #define ll long long int
-ll dp[1005][1005][10];
-ll a[5]={1,3,4,5,6};
-
-void fun(ll a[]){
-    for(int i=0;i<5;i++) a[i]+=5;
+#define ld long double
+#define vi vector<int>
+#define vl vector<ll>
+#define ii pair<int,int>
+#define pb push_back
+#define mp make_pair
+#define ff first
+#define ss second
+#define pll pair<ll,ll>
+#define vv vector
+#define all(v) (v).begin(),(v).end()
+#define MAXN 300005
+int MOD=1e9+7;
+ll power(ll a, ll b){//a^b
+    ll res=1;
+    a=a%MOD;
+    while(b>0){
+        if(b&1){res=(res*a)%MOD;b--;}
+        a=(a*a)%MOD;
+        b>>=1;
+    }
+    return res;
+}
+ll fermat_inv(ll y){return power(y,MOD-2);}
+ll gcd(ll a, ll b){return (b==0)?a:gcd(b,a%b);}
+ll min(ll a,ll b){return (a>b)?b:a;}
+ll max(ll a,ll b){return (a>b)?a:b;}
+bool prime[1000001];
+vi primes;
+void SieveOfEratosthenes(int n) 
+{ 
+    memset(prime, true, sizeof(prime));
+    prime[0]=prime[1]=0;
+    for (int p=2; p*p<=n; p++) 
+    { 
+        if (prime[p] == true) 
+        { 
+            for (int i=p*p; i<=n; i += p) 
+                prime[i] = false; 
+        } 
+    } 
+    for(int p=2;p<1000001;p++)
+        if(prime[p])
+            primes.pb(p);
+}
+ll fact[1000010];
+ll finv[1000010];
+void factorial(int n){
+    fact[0]=1;
+    finv[0]=1;
+    for(int i=1;i<=n;i++)
+        fact[i]=fact[i-1]*i,fact[i]%=MOD,finv[i]=fermat_inv(fact[i]);
+}
+ll ncr(ll n,ll r)
+{
+    if(n<r)
+        return 0;
+    else{
+        ll x=finv[r]*finv[n-r]%MOD;
+        return fact[n]*x%MOD;
+    }
 }
 
-int main(){
-    // ll n,k;
-    // cin>>n>>k;
-    // ll a[n+1][3];
-    // for(int i=1;i<=n;i++) for(int j=0;j<3;j++) cin>>a[i][j];
-    // memset(dp,0,sizeof(dp));
-    // for(int i=0;i<n;i++){
-    //     for(int j=0;j<=k;j++){
-    //         for(int mask=0;mask<8;mask++){
-    //             dp[i+1][j][0]=max(dp[i+1][j][0],dp[i][j][mask]);
-    //             dp[i+1][j+1][3]=max(dp[i+1][j+1][3],dp[i][j][mask]+a[i+1][1]+a[i+1][2]);
-    //             dp[i+1][j+1][6]=max(dp[i+1][j+1][6],dp[i][j][mask]+a[i+1][0]+a[i+1][1]);
-    //             if(i+2<=n){
-    //                 dp[i+2][j+1][4]=max(dp[i+2][j+1][4],dp[i][j][mask]+a[i+1][0]+a[i+2][0]);
-    //                 dp[i+2][j+1][2]=max(dp[i+2][j+1][2],dp[i][j][mask]+a[i+1][1]+a[i+2][1]);
-    //                 dp[i+2][j+1][1]=max(dp[i+2][j+1][1],dp[i][j][mask]+a[i+1][2]+a[i+2][2]);
-    //                 dp[i+2][j+2][4]=max(dp[i+2][j+2][4],dp[i][j][mask]+a[i+1][0]+a[i+2][0]+a[i+1][1]+a[i+1][2]);
-    //                 dp[i+2][j+2][1]=max(dp[i+2][j+2][1],dp[i][j][mask]+a[i+1][2]+a[i+2][2]+a[i+1][1]+a[i+1][0]);
-    //                 dp[i+2][j+3][7]=max(dp[i+2][j+3][7],dp[i][j][mask]+a[i+1][0]+a[i+1][1]+a[i+1][2]+a[i+2][0]+a[i+2][1]+a[i+2][2]);
-    //             }
-    //         }
-    //     }
-    // }
-    // ll ans=0;
-    // for(int i=0;i<=k;i++) for(int j=0;j<8;j++) ans=max(ans,dp[n][i][j]);
-    // cout<<ans<<'\n';
-    for(int i=0;i<5;i++) cout<<a[i]<<' ';
-    cout<<'\n';
-    fun(a);
-    for(int i=0;i<5;i++) cout<<a[i]<<' ';
-    cout<<'\n';
+bool solve(int n,string s){
+    stack<char>v;
+    for(int i=0;i<n;i++){
+        if(v.empty()||v.top()!=s[i]) v.push(s[i]);
+        else v.pop();
+    }
+    if(v.size()>=2) return 0;
+    return 1;
+}
+
+bool solve1(int n,string s){
+    stack<int>v;
+    for(int i=0;i<n;i++){
+        int j=i;
+        while(j+1<n&&s[j+1]==s[j]) j++;
+        if((j-i)%2){
+            if(v.size()&&v.top()==1) v.push(0);
+        }
+        else{
+            if(v.empty()||v.top()) v.push(1);
+            else{
+                v.pop(),v.pop();
+                if(v.size()&&v.top()==1) v.push(0);
+            }
+        }
+        i=j;
+    }
+    if(v.size()&&v.top()==0) v.pop();
+    if(v.size()>=2) return 0;
+    return 1;
+}
+
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    // #ifndef ONLINE_JUDGE
+    //     freopen("input.txt", "r", stdin);
+    //     freopen("output.txt", "w", stdout);
+    // #endif
+
+    int n=10;
+    for(int j=0;j<1000;j++){
+        string s="";
+        for(int i=0;i<n;i++){
+            int x=rand()%2;
+            if(x) s+='0';
+            else s+='1';
+        }
+        if(solve(n,s)!=solve1(n,s))
+            cout<<j<<' '<<s<<'\n';
+    }
 }
